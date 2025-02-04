@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Bot Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); }}
+        body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    background: white 
+
+
+ /* Updated path */
+   
+}
+    
+        .background-icons { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: -1; }
+        .background-icons img { position: absolute; width: 125px; height: 125px; opacity: 0.5; animation: float 3s ease-in-out infinite; }
+        .icon1 { top: 10%; left: 0%; animation-delay: 0s; }
+        .icon2 { top: 60%; left: 80%; animation-delay: 2s; }
+        .icon3 { top: 70%; left: 10%; animation-delay: 4s; }
+        .icon4 { top: 30%; left: 80%; animation-delay: 3s; }
+        .icon5 { top: 80%; left: 50%; animation-delay: 5s; }
+        .container { width: 400px; padding: 20px; background: rgba(255, 255, 255, 0.2); border-radius: 15px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); text-align: center; z-index: 1; }
+        .xClass{position: absolute;top: 0px;left: 450px; overflow: hidden; }
+        .X{border-radius: 50%; width: 80px;height: 80px;position: relative;top: 25px; }
+        
+        h1{font-family: Popins;}
+        .container 
+        input, textarea { width: 100%; padding: 10px; margin: 10px -10px; border-radius: 20px; border: 1px solid #ddd; font-size: 16px; background: rgba(255, 255, 255, 0.6); color: #333; }
+       
+          
+        button{
+            margin: 10px;
+            padding: 15px 30px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color:  white;
+            border-radius: 10px;
+            display: block;
+            border: 0px;
+            font-weight: 700;
+            box-shadow: 0px 0px 14px -7px #1940f0;
+            background-image: linear-gradient(45deg, #1DA1F2 0%, #d1e0e9 51%, #1DA1F2 100%);
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+          }
+
+          button:hover {
+            background-position: right center;
+            /* change the direction of the change here */
+            color: #fff;
+            text-decoration: none;
+          }
+
+          .button-87:active {
+            transform: scale(0.95);
+          }
+        
+        
+        #result { margin-top: 20px; font-size: 18px; }
+        .loading { color: #888; }
+        .error { color: red; }
+        .video-container { display: none; width: 100px; height: 100px; background-color: #ffffff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 50%; overflow: hidden; position: absolute; top: 50px; right: 80px; z-index: 10; }
+        .video-container video { width: 100%; height: 100%; }
+        .user-info-container {width: 500px;padding: 20px;background: rgba(255, 255, 255, 0.2);border-radius: 15px;box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);backdrop-filter: blur(10px);-webkit-backdrop-filter: blur(10px);border: 1px solid rgba(255, 255, 255, 0.3);text-align: left;position: absolute;right: 25%;top: 5%;z-index: 2;color: black;}
+        .user-info-container h2 { font-size: 20px; color: black; }
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .info-item img {
+            width: 60px;
+            height: 60px;
+            margin-right: 8px;
+            animation: float 2s ease-in-out infinite;
+        }
+        .verify-container{position:absolute;top: 565px;left: 60px;}
+       
+
+    </style>
+</head>
+<body>
+    <div class="background-icons">
+        <img src="{{ url_for('static', filename='twitter_icon.gif') }}" class="icon1" alt="Twitter icon">
+        <img src="{{ url_for('static', filename='twitter_icon.gif') }}" class="icon2" alt="Twitter icon">
+        <img src="{{ url_for('static', filename='twitter_icon.gif') }}" class="icon3" alt="Twitter icon">
+        <img src="{{ url_for('static', filename='twitter_icon.gif') }}" class="icon4" alt="Twitter icon">
+        
+    </div>
+    
+    <div class="xClass"><h1 style="font-size: 40px; ">TWEET  <span style="font-size: 80px; position: relative;top: 15px;"> B</span>  <img src="{{ url_for('static', filename='x.gif') }}" class="X" alt="x icon"><span style="font-size: 80px; position: relative;top: 15px;">T</span>  DETECTOR  </h1></div>
+    <div id="container">
+        
+        <form id="botForm">
+            <label for="name">User name</label>
+            <textarea id="name" name="name" rows="3" required></textarea>
+            <label for="bio">User Bio</label>
+            <textarea id="bio" name="bio" rows="3" required></textarea>
+            <label for="tweet">Tweet</label>
+            <textarea id="tweet" name="tweet" rows="3" required></textarea>
+            <center><button type="submit">CHECK</button></center>
+        </form>
+        <center><div id ="invalid"></div></center>
+    </div>
+
+    
+
+    <div class="user-info-container" id="userInfoContainer" style="display:none;">
+        <button class="go-back-button" onclick="goBack()">back</button>
+        <div class="video-container" id="videoContainer">
+            <video id="botVideo" autoplay loop muted>
+                <source src="{{ url_for('static', filename='Robotics.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <video id="botVideo" autoplay loop muted>
+                <source src="{{ url_for('static', filename='HumanVideo.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <h2>User Information</h2>
+        <div class="info-item"><img src="{{ url_for('static', filename='username_icon.gif') }}" alt="Username icon"><strong>Username: &nbsp;@</strong> <span id="infoUsername"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='userid_icon.gif') }}" alt="User ID icon"><strong>User ID:  &nbsp; </strong> <span id="infoUserId"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='date_icon.gif') }}" alt="Date icon"><strong>Creation Date: &nbsp; </strong> <span id="infoCreationDate"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='following_icon.gif') }}" alt="Following icon"><strong>Following Count: &nbsp;</strong> <span id="infoFollowingCount"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='followers_icon.gif') }}" alt="Followers icon"><strong>Follower Count:  &nbsp;</strong> <span id="infoFollowerCount"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='timestamp_icon.gif') }}" alt="Timestamp icon"><strong>Tweet TimeStamp: &nbsp; </strong> <span id="infoTweetTimeStamp"></span></div>
+        <div class="info-item"><img src="{{ url_for('static', filename='location_icon.gif') }}" alt="Location icon"><strong>Location: &nbsp; </strong> <span id="infoLocation"></span></div>
+        <center><div id="result"> </div></center>
+        <div class="verify-container" id="verify-container" >
+            <img id ="verified-user" src="{{url_for('static', filename='verified.gif') }}" alt="Verified icon" style="display: block;">
+            <img id ="verified-bot" src="{{url_for('static', filename='unverified.gif') }}" alt="Verified icon" style="width: 50px; height: 50px; position: absolute; top: 45px; left: 60px;">
+        </div>
+    
+    <script>
+        document.getElementById("botForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const bio = document.getElementById("bio").value;
+    const tweet = document.getElementById("tweet").value;
+    const resultDiv = document.getElementById("result");
+    const invalidDiv = document.getElementById("invalid");
+    const videoContainer = document.getElementById("videoContainer");
+    const botVideo = document.getElementById("botVideo");
+    const verify_container = document.getElementById("verify-container");
+    const verified_user = document.getElementById("verified-user");
+    const verified_bot = document.getElementById("verified-bot");
+    const name = document.getElementById("name").value;
+    const x = document.querySelector(".xClass");
+
+    x.style.display = "none";
+    resultDiv.textContent = "Checking...";
+    resultDiv.classList.add("loading");
+    invalidDiv.textContent = "Checking...";
+    invalidDiv.classList.add("loading");
+
+    try {
+        // Check if user exists in the dataset
+        const userResponse = await fetch('/get_user_info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+        const userData = await userResponse.json();
+
+        if (!userResponse.ok || userData.status === "not found") {
+            invalidDiv.textContent = "User not found ";
+            invalidDiv.classList.add("error");
+            document.getElementById("botForm").style.display = "block";
+            return;
+        }
+        container.style.display = "none";  // Hide the form
+
+        // Display user information if found
+        document.getElementById("infoUsername").textContent = userData.username;
+        document.getElementById("infoUserId").textContent = userData.user_id;
+        document.getElementById("infoCreationDate").textContent = userData.creation_date;
+        document.getElementById("infoFollowingCount").textContent = userData.following_count;
+        document.getElementById("infoFollowerCount").textContent = userData.follower_count;
+        document.getElementById("infoTweetTimeStamp").textContent = userData.tweet_timestamp;
+        document.getElementById("infoLocation").textContent = userData.location;
+        document.getElementById("userInfoContainer").style.display = "block";
+
+        // Existing bot prediction logic
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bio, tweet })
+        });
+
+        if (!response.ok) {
+            throw new Error("Server error: " + response.statusText);
+        }
+
+        const data = await response.json();
+        resultDiv.classList.remove("loading");
+        resultDiv.classList.remove("error");
+        
+        resultDiv.textContent = data.result;
+        resultDiv.style.fontSize = "20px";
+        resultDiv.style.fontWeight = "bold";
+        resultDiv.style.fontFamily = "Arial, sans-serif";
+        resultDiv.style.color = data.result === 'Spam Bot Detected' ? 'red' : 'green';
+
+        // Play corresponding video based on prediction result
+        videoContainer.style.display = "block";
+        
+        if (data.result === 'Spam Bot Detected') {
+            botVideo.src = "{{ url_for('static', filename='Robotics.mp4') }}";
+            verified_user.style.display = "none";
+            verified.src="{{url_for('static', filename='unverified.gif') }}";
+
+        } else {
+            botVideo.src = "{{ url_for('static', filename='HumanVideo.mp4') }}";
+            verified_bot.style.display = "none";
+            verified_user.src="{{url_for('static', filename='verified.gif') }}";
+        }
+        botVideo.play();
+    } catch (error) {
+        resultDiv.classList.remove("loading");
+        resultDiv.classList.add("error");
+        resultDiv.textContent = "An error occurred: " + error.message;
+    }
+});
+function goBack() {
+            const formContainer = document.getElementById("container");
+            const userInfoContainer = document.getElementById("userInfoContainer");
+            const x = document.querySelector(".xClass");
+            formContainer.style.display = "block";  // Show the form again
+            userInfoContainer.style.display = "none";  // Hide the user info
+            x.style.display = "block";  // Show the "X" button
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+    const labels = document.querySelectorAll("label");
+
+    // Get the maximum label width and apply it to all labels
+    let maxWidth = 0;
+    labels.forEach(label => {
+      const labelWidth = label.offsetWidth;
+      if (labelWidth > maxWidth) {
+        maxWidth = labelWidth;
+      }
+    });
+
+    // Apply the max width to all labels for consistent alignment
+    labels.forEach(label => {
+      label.style.minWidth = maxWidth + "px";
+    });
+  });
+      
+
+    </script>
+</body>
+</html>
